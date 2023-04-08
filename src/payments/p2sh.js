@@ -48,7 +48,7 @@ function p2sh(a, opts) {
   }
   const o = { network };
   const _address = lazy.value(() => {
-    const payload = bs58check.decode(a.address);
+    const payload = Buffer.from(bs58check.decode(a.address));
     const version = payload.readUInt8(0);
     const hash = payload.slice(1);
     return { version, hash };
@@ -58,9 +58,10 @@ function p2sh(a, opts) {
   });
   const _redeem = lazy.value(() => {
     const chunks = _chunks();
+    const lastChunk = chunks[chunks.length - 1];
     return {
       network,
-      output: chunks[chunks.length - 1],
+      output: lastChunk === OPS.OP_FALSE ? Buffer.from([]) : lastChunk,
       input: bscript.compile(chunks.slice(0, -1)),
       witness: a.witness || [],
     };
@@ -137,6 +138,14 @@ function p2sh(a, opts) {
         const decompile = bscript.decompile(redeem.output);
         if (!decompile || decompile.length < 1)
           throw new TypeError('Redeem.output too short');
+        if (redeem.output.byteLength > 520)
+          throw new TypeError(
+            'Redeem.output unspendable if larger than 520 bytes',
+          );
+        if (bscript.countNonPushOnlyOPs(decompile) > 201)
+          throw new TypeError(
+            'Redeem.output unspendable with more than 201 non-push ops',
+          );
         // match hash against other sources
         const hash2 = bcrypto.hash160(redeem.output);
         if (hash.length > 0 && !hash.equals(hash2))

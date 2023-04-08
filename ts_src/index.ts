@@ -7,6 +7,7 @@ import * as script from './script';
 export { address, crypto, networks, payments, script };
 
 export { Block } from './block';
+export { TaggedHashPrefix } from './crypto';
 export {
   Psbt,
   PsbtTxInput,
@@ -28,3 +29,4 @@ export {
   StackElement,
 } from './payments';
 export { Input as TxInput, Output as TxOutput } from './transaction';
+export { initEccLib } from './ecc_lib';

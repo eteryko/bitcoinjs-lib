@@ -1,8 +1,11 @@
 import * as assert from 'assert';
-import { ECPair } from 'ecpair';
+import ECPairFactory from 'ecpair';
+import * as ecc from 'tiny-secp256k1';
 import { before, describe, it } from 'mocha';
 import * as bitcoin from '../..';
 import { regtestUtils } from './_regtest';
+
+const ECPair = ECPairFactory(ecc);
 const regtest = regtestUtils.network;
 const bip65 = require('bip65');
 
@@ -78,7 +81,7 @@ describe('bitcoinjs-lib (transactions w/ CLTV)', () => {
       const unspent = await regtestUtils.faucet(address!, 1e5);
       const tx = new bitcoin.Transaction();
       tx.locktime = lockTime;
-      // Note: nSequence MUST be <= 0xfffffffe otherwise LockTime is ignored, and is immediately spendable.
+      // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
       tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 7e4);
 
@@ -127,7 +130,7 @@ describe('bitcoinjs-lib (transactions w/ CLTV)', () => {
       const unspent = await regtestUtils.faucet(address!, 1e5);
       const tx = new bitcoin.Transaction();
       tx.locktime = lockTime;
-      // Note: nSequence MUST be <= 0xfffffffe otherwise LockTime is ignored, and is immediately spendable.
+      // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
       tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 7e4);
 
@@ -178,7 +181,7 @@ describe('bitcoinjs-lib (transactions w/ CLTV)', () => {
       const unspent = await regtestUtils.faucet(address!, 2e5);
       const tx = new bitcoin.Transaction();
       tx.locktime = lockTime;
-      // Note: nSequence MUST be <= 0xfffffffe otherwise LockTime is ignored, and is immediately spendable.
+      // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
       tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 8e4);
 
@@ -226,7 +229,7 @@ describe('bitcoinjs-lib (transactions w/ CLTV)', () => {
       const unspent = await regtestUtils.faucet(address!, 2e4);
       const tx = new bitcoin.Transaction();
       tx.locktime = lockTime;
-      // Note: nSequence MUST be <= 0xfffffffe otherwise LockTime is ignored, and is immediately spendable.
+      // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
       tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 1e4);
 
@@ -250,7 +253,7 @@ describe('bitcoinjs-lib (transactions w/ CLTV)', () => {
       await regtestUtils.broadcast(tx.toHex()).catch(err => {
         assert.throws(() => {
           if (err) throw err;
-        }, /Error: non-final \(code 64\)/);
+        }, /Error: non-final/);
       });
     },
   );

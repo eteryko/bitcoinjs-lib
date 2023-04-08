@@ -1,3 +1,28 @@
+# 6.1.0
+__added__
+- taproot support for payments (p2tr) and PSBT. See taproot.spec.ts integration test for examples. (#1742)
+
+# 6.0.2
+__fixed__
+- p2sh payment now uses empty Buffer for redeem.output when redeemScript is OP_FALSE (#1802)
+- Fix ripemd160 hashing fallback issue (#1812)
+
+# 6.0.1
+- No changes to public API
+
+# 6.0.0
+__removed__
+- bip32: Removed the re-export. Please add as dependency to your app instead.
+- ECPair: Please use bip32 moving forward. ecpair package was created for those who need it.
+- TransactionBuilder: Any internal files used only in TB (classify, templates, etc.) were also removed.
+
+__added__
+- taproot segwit v1 address support (bech32m) via address module (#1676)
+- hashForWitnessV1 method on Transaction class (#1745)
+
+__fixed__
+- Transaction version read/write differed. (#1717)
+
 # 5.2.0
 __changed__
 - Updated PSBT to allow for witnessUtxo and nonWitnessUtxo simultaneously (Re: segwit psbt bug) (#1563)

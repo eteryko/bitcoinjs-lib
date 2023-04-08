@@ -1,8 +1,5 @@
 # BitcoinJS (bitcoinjs-lib)
-[![Build Status](https://travis-ci.org/bitcoinjs/bitcoinjs-lib.png?branch=master)](https://travis-ci.org/bitcoinjs/bitcoinjs-lib)
-[![NPM](https://img.shields.io/npm/v/bitcoinjs-lib.svg)](https://www.npmjs.org/package/bitcoinjs-lib)
-
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![Github CI](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml/badge.svg)](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml) [![NPM](https://img.shields.io/npm/v/bitcoinjs-lib.svg)](https://www.npmjs.org/package/bitcoinjs-lib) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 A javascript Bitcoin library for node.js and browsers. Written in TypeScript, but committing the JS files to verify.
 
@@ -68,9 +65,9 @@ It can do this through undermining your random number generation, accidentally p
 Running tests in your target environment is important and a recommended step to verify continuously.
 
 Finally, **adhere to best practice**.
-We are not an authorative source of best practice, but, at the very least:
+We are not an authoritative source of best practice, but, at the very least:
 
-* [Don't re-use addresses](https://en.bitcoin.it/wiki/Address_reuse).
+* [Don't reuse addresses](https://en.bitcoin.it/wiki/Address_reuse).
 * Don't share BIP32 extended public keys ('xpubs'). [They are a liability](https://bitcoin.stackexchange.com/questions/56916/derivation-of-parent-private-key-from-non-hardened-child), and it only takes 1 misplaced private key (or a buggy implementation!) and you are vulnerable to **catastrophic fund loss**.
 * [Don't use `Math.random`](https://security.stackexchange.com/questions/181580/why-is-math-random-not-designed-to-be-cryptographically-secure) - in any way - don't.
 * Enforce that users always verify (manually) a freshly-decoded human-readable version of their intended transaction before broadcast.
@@ -79,12 +76,24 @@ We are not an authorative source of best practice, but, at the very least:
 
 
 ### Browser
-The recommended method of using `bitcoinjs-lib` in your browser is through [Browserify](https://github.com/substack/node-browserify).
-If you're familiar with how to use browserify, ignore this and carry on, otherwise, it is recommended to read the tutorial at https://browserify.org/.
+The recommended method of using `bitcoinjs-lib` in your browser is through [browserify](http://browserify.org/).
+
+If you'd like to use a different (more modern) build tool than `browserify`, you can compile just this library and its dependencies into a single JavaScript file:
+
+```sh
+$ npm install bitcoinjs-lib browserify
+$ npx browserify --standalone bitcoin - -o bitcoinjs-lib.js <<<"module.exports = require('bitcoinjs-lib');"
+```
+
+Which you can then import as an ESM module:
+
+```javascript
+<script type="module">import "/scripts/bitcoinjs-lib.js"</script>
+````
 
 **NOTE**: We use Node Maintenance LTS features, if you need strict ES5, use [`--transform babelify`](https://github.com/babel/babelify) in conjunction with your `browserify` step (using an [`es2015`](https://babeljs.io/docs/plugins/preset-es2015/) preset).
 
-**WARNING**: iOS devices have [problems](https://github.com/feross/buffer/issues/136), use atleast [buffer@5.0.5](https://github.com/feross/buffer/pull/155) or greater,  and enforce the test suites (for `Buffer`, and any other dependency) pass before use.
+**WARNING**: iOS devices have [problems](https://github.com/feross/buffer/issues/136), use at least [buffer@5.0.5](https://github.com/feross/buffer/pull/155) or greater,  and enforce the test suites (for `Buffer`, and any other dependency) pass before use.
 
 ### Typescript or VSCode users
 Type declarations for Typescript are included in this library. Normal installation should include all the needed type information.
@@ -94,6 +103,8 @@ The below examples are implemented as integration tests, they should be very eas
 Otherwise, pull requests are appreciated.
 Some examples interact (via HTTPS) with a 3rd Party Blockchain Provider (3PBP).
 
+
+- [Taproot Key Spend](https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/taproot.spec.ts)
 - [Generate a random address](https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/addresses.spec.ts)
 - [Import an address via WIF](https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/addresses.spec.ts)
 - [Generate a 2-of-3 P2SH multisig address](https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/test/integration/addresses.spec.ts)

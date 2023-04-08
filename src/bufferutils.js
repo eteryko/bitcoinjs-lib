@@ -1,6 +1,13 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-exports.BufferReader = exports.BufferWriter = exports.cloneBuffer = exports.reverseBuffer = exports.writeUInt64LE = exports.readUInt64LE = exports.varuint = void 0;
+exports.BufferReader =
+  exports.BufferWriter =
+  exports.cloneBuffer =
+  exports.reverseBuffer =
+  exports.writeUInt64LE =
+  exports.readUInt64LE =
+  exports.varuint =
+    void 0;
 const types = require('./types');
 const { typeforce } = types;
 const varuint = require('varuint-bitcoin');
@@ -53,6 +60,9 @@ exports.cloneBuffer = cloneBuffer;
  * Helper class for serialization of bitcoin data types into a pre-allocated buffer.
  */
 class BufferWriter {
+  static withCapacity(size) {
+    return new BufferWriter(Buffer.alloc(size));
+  }
   constructor(buffer, offset = 0) {
     this.buffer = buffer;
     this.offset = offset;
@@ -87,6 +97,12 @@ class BufferWriter {
   writeVector(vector) {
     this.writeVarInt(vector.length);
     vector.forEach(buf => this.writeVarSlice(buf));
+  }
+  end() {
+    if (this.buffer.length === this.offset) {
+      return this.buffer;
+    }
+    throw new Error(`buffer size ${this.buffer.length}, offset ${this.offset}`);
   }
 }
 exports.BufferWriter = BufferWriter;
